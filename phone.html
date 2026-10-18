@@ -357,11 +357,24 @@ function openApp(name) {
   const content = document.getElementById("appContent");
   content.className = "app-screen" + (name === "settings" ? " dark-app" : "");
   const pages = {
-    messages: `<button class="back" onclick="goHome()">‹ 홈</button>
-      <h2>메시지</h2>
-      <div class="panel">💬 대화</div>
-      <div class="panel"><textarea id="messageInput" placeholder="메시지를 적어 봐...">${escapeText(messageText)}</textarea>
-      <button class="back" onclick="saveMessages()">저장</button></div>`,
+    messages: 
+messages: `
+  <button class="back" onclick="goHome()">‹ 홈</button>
+  <div style="display:flex;align-items:center;gap:12px;padding:14px 4px">
+    <div style="width:48px;height:48px;border-radius:50%;background:#444;display:grid;place-items:center;font-size:24px">👤</div>
+    <div>
+      <div style="font-size:19px;font-weight:700">캐릭터 이름</div>
+      <div style="font-size:12px;color:#888">iMessage</div>
+    </div>
+  </div>
+  <div id="chatHistory" style="height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:12px 0">
+    <div style="align-self:flex-start;background:#303034;color:white;border-radius:18px;padding:10px 14px;max-width:80%">안녕! 뭐 하고 있어? 👀</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+    <input id="chatInput" placeholder="iMessage" style="flex:1;min-width:0;border:1px solid #555;border-radius:22px;background:#29292d;color:white;padding:12px">
+    <button onclick="sendCharacterMessage()" style="border:0;border-radius:50%;background:#1685ff;color:white;width:42px;height:42px;font-size:20px">↑</button>
+  </div>
+`,
     photos: `<button class="back" onclick="goHome()">‹ 홈</button>
       <h2>사진</h2>
       <div class="panel">사진 보관함</div>
@@ -391,6 +404,23 @@ function openApp(name) {
   };
   content.innerHTML = pages[name] || pages.profile;
   showScreen("app");
+}
+  
+function sendCharacterMessage() {
+  const input = document.getElementById("chatInput");
+  const history = document.getElementById("chatHistory");
+
+  if (!input || !history || !input.value.trim()) return;
+
+  const bubble = document.createElement("div");
+  bubble.textContent = input.value.trim();
+  bubble.style.cssText =
+    "align-self:flex-end;background:#1685ff;color:white;" +
+    "border-radius:18px;padding:10px 14px;max-width:80%;overflow-wrap:anywhere";
+
+  history.appendChild(bubble);
+  input.value = "";
+  history.scrollTop = history.scrollHeight;
 }
 function goHome() { showScreen("home"); }
 function escapeText(s) {
